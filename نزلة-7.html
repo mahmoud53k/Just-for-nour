@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>سؤال بسيط</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#FFE1EA;
+    --blush-deep:#FFC2D6;
+    --rose:#D6336C;
+    --rose-dark:#7A1F3D;
+    --cream:#FFF8F6;
+    --gold:#E8B84B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html, body{ height:100%; overflow-x:hidden; }
+  body{
+    background: radial-gradient(circle at 50% -10%, var(--blush-deep) 0%, var(--blush) 55%, #FFF0F3 100%);
+    font-family:'Tajawal', sans-serif;
+    color: var(--rose-dark);
+    min-height:100vh;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px 16px;
+  }
+  .petal{
+    position:fixed;
+    top:-40px;
+    font-size: 20px;
+    opacity:0.85;
+    pointer-events:none;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    z-index:0;
+    user-select:none;
+  }
+  @keyframes fall{
+    0%{ transform: translateY(-5vh) rotate(0deg); }
+    100%{ transform: translateY(105vh) rotate(360deg); }
+  }
+  .card{
+    position:relative;
+    z-index:2;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 28px;
+    padding: 44px 30px 38px;
+    max-width: 420px;
+    width:100%;
+    text-align:center;
+    box-shadow: 0 20px 50px rgba(122,31,61,0.15);
+  }
+  .roses-row{ font-size: 26px; letter-spacing: 8px; margin-bottom: 14px; }
+  .eyebrow{ font-size: 13px; color: var(--rose); opacity:0.8; letter-spacing: 1px; margin-bottom: 10px; }
+  h1{
+    font-family: 'Aref Ruqaa', serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.6;
+    color: var(--rose-dark);
+    margin-bottom: 8px;
+  }
+  h1 .accent{ color: var(--rose); }
+  .sub{ font-size: 15px; color: var(--rose-dark); opacity: 0.75; margin-bottom: 34px; line-height:1.7; }
+  .buttons{
+    position: relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 18px;
+    min-height: 130px;
+  }
+  button{
+    border:none;
+    font-family:'Tajawal', sans-serif;
+    font-weight: 700;
+    cursor:pointer;
+    border-radius: 999px;
+    transition: transform .18s ease, background .2s ease, left .18s ease, top .18s ease;
+  }
+  #yesBtn{
+    background: linear-gradient(135deg, var(--rose), #ff5c8a);
+    color: white;
+    padding: 16px 30px;
+    font-size: 17px;
+    box-shadow: 0 8px 20px rgba(214,51,108,0.35);
+    z-index: 3;
+  }
+  #noBtn{
+    background: white;
+    color: var(--rose-dark);
+    padding: 16px 26px;
+    font-size: 16px;
+    border: 1.5px solid var(--blush-deep);
+    z-index: 3;
+  }
+  #noBtn.dodging{ position: fixed; }
+  .hint{ margin-top: 22px; font-size: 12.5px; color: var(--rose-dark); opacity: 0.45; }
+  .confirmed{ display:none; text-align:center; }
+  .confirmed .big-heart{ font-size: 48px; margin-bottom: 12px; animation: beat 1s ease-in-out infinite; }
+  @keyframes beat{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.15); } }
+  .confirmed h2{ font-family: 'Aref Ruqaa', serif; font-size: 26px; color: var(--rose-dark); margin-bottom: 8px; }
+  .confirmed p{ font-size: 14px; opacity:0.7; margin-bottom: 22px; }
+
+  /* day picker screen */
+  #pickScreen{ display:none; }
+  #pickScreen .roses-row{ font-size:22px; margin-bottom: 10px; }
+  #pickScreen h2{
+    font-family:'Aref Ruqaa', serif;
+    font-size: 24px;
+    color: var(--rose-dark);
+    margin-bottom: 6px;
+  }
+  #pickScreen .sub2{
+    font-size: 13.5px;
+    color: var(--rose-dark);
+    opacity:0.65;
+    margin-bottom: 22px;
+  }
+  #dayList{ display:flex; flex-direction:column; gap:12px; }
+  .day-card{
+    display:flex;
+    align-items:center;
+    background: white;
+    border: 1.5px solid var(--blush-deep);
+    border-radius: 16px;
+    padding: 14px 18px;
+    cursor:pointer;
+    text-align:right;
+    font-family:'Tajawal', sans-serif;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .day-card:active{ transform: scale(0.97); }
+  .day-card.selected{
+    background: linear-gradient(135deg, var(--rose), #ff5c8a);
+    border-color: var(--rose);
+    color:white;
+  }
+  .day-card .dnum{
+    font-family:'Aref Ruqaa', serif;
+    font-size: 22px;
+    width: 44px;
+    flex-shrink:0;
+  }
+  .day-card .dinfo{ flex:1; }
+  .day-card .dname{ font-weight:700; font-size:15px; }
+  .day-card .dmon{ font-size:12px; opacity:0.6; margin-top:2px; }
+  .day-card .dmark{ font-size:18px; }
+
+  /* final confirmation after picking a day */
+  #finalScreen{ display:none; text-align:center; }
+  #finalScreen .stamp{ font-size: 44px; margin-bottom: 10px; }
+  #finalScreen h2{ font-family:'Aref Ruqaa', serif; font-size: 25px; color: var(--rose-dark); margin-bottom: 8px; }
+  #finalScreen p{ font-size: 14px; opacity:0.7; }
+
+  /* activity picker */
+  #activityScreen{ display:none; }
+  #activityScreen .roses-row{ font-size:22px; margin-bottom: 10px; }
+  #activityScreen h2{
+    font-family:'Aref Ruqaa', serif;
+    font-size: 24px;
+    color: var(--rose-dark);
+    margin-bottom: 6px;
+  }
+  #activityScreen .sub2{
+    font-size: 13.5px;
+    color: var(--rose-dark);
+    opacity:0.65;
+    margin-bottom: 22px;
+  }
+  #activityList{ display:flex; flex-direction:column; gap:12px; }
+  .activity-card{
+    display:flex;
+    align-items:center;
+    background: white;
+    border: 1.5px solid var(--blush-deep);
+    border-radius: 16px;
+    padding: 16px 18px;
+    cursor:pointer;
+    text-align:right;
+    font-family:'Tajawal', sans-serif;
+    transition: transform .15s ease;
+  }
+  .activity-card:active{ transform: scale(0.97); }
+  .activity-card .aicon{ font-size: 26px; width: 44px; flex-shrink:0; }
+  .activity-card .ainfo{ flex:1; }
+  .activity-card .aname{ font-weight:700; font-size:15px; }
+  .activity-card .adesc{ font-size:12px; opacity:0.6; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="askScreen">
+    <div class="roses-row">🌹🌷🌹</div>
+    <div class="eyebrow">مش هنحدد داتة النهاردة</div>
+    <h1>بس في سؤال <span class="accent">واحد بس</span><br>محتاج إجابته</h1>
+    <p class="sub">تنزلي معايا؟ 🌸</p>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+    <div class="hint">جاوبي بصراحة 👀</div>
+  </div>
+
+  <div class="confirmed" id="confirmedScreen">
+    <div class="big-heart">❤️</div>
+    <h2>يـيـه! 🌹</h2>
+    <p>كنت متأكد إنك هتقولي كده</p>
+    <button id="nextBtn" style="background:linear-gradient(135deg, var(--rose), #ff5c8a); color:white; padding:14px 26px; font-size:15px; border-radius:999px;">تعالي نحدد اليوم</button>
+  </div>
+
+  <div id="pickScreen">
+    <div class="roses-row">🌷🌹🌷</div>
+    <h2>نتقابل إمتى؟</h2>
+    <div class="sub2">اختاري اليوم اللي يريحك</div>
+    <div id="dayList"></div>
+  </div>
+
+  <div id="activityScreen">
+    <div class="roses-row">🌊☕🍽️</div>
+    <h2>نعمل إيه؟</h2>
+    <div class="sub2">اختاري اللي تحبيه</div>
+    <div id="activityList">
+      <div class="activity-card" data-a="نتمشى على البحر" data-icon="🌊">
+        <div class="aicon">🌊</div>
+        <div class="ainfo">
+          <div class="aname">نتمشى على البحر</div>
+          <div class="adesc">هوا وبحر واسكندرية</div>
+        </div>
+      </div>
+      <div class="activity-card" data-a="كافيه" data-icon="☕">
+        <div class="aicon">☕</div>
+        <div class="ainfo">
+          <div class="aname">كافيه</div>
+          <div class="adesc">قعدة هادية وكلام</div>
+        </div>
+      </div>
+      <div class="activity-card" data-a="مطعم" data-icon="🍽️">
+        <div class="aicon">🍽️</div>
+        <div class="ainfo">
+          <div class="aname">مطعم</div>
+          <div class="adesc">أكلة حلوة مع بعض</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="finalScreen">
+    <div class="stamp">🌹</div>
+    <h2 id="finalText"></h2>
+    <p>هبقى مستنيك 🌸</p>
+    <button id="waBtn" style="margin-top:20px; background:#25D366; color:white; padding:14px 26px; font-size:15px; border-radius:999px; border:none; font-family:'Tajawal', sans-serif; font-weight:700; cursor:pointer;">ابعتي على واتساب 📩</button>
+  </div>
+</div>
+
+<script>
+  const petals = ["🌸","🌹","🌺","💮","🌷"];
+  const petalCount = 22;
+  for(let i=0;i<petalCount;i++){
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = petals[Math.floor(Math.random()*petals.length)];
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.fontSize = (14 + Math.random()*16) + 'px';
+    p.style.animationDuration = (7 + Math.random()*8) + 's';
+    p.style.animationDelay = (Math.random()*8) + 's';
+    document.body.appendChild(p);
+  }
+
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const buttonsBox = document.querySelector('.buttons');
+  let scale = 1;
+  let dodgeCount = 0;
+
+  function growYes(){
+    scale += 0.18;
+    yesBtn.style.transform = `scale(${scale})`;
+    yesBtn.style.fontSize = (17 + dodgeCount*1.5) + 'px';
+  }
+
+  function dodgeNo(){
+    dodgeCount++;
+    growYes();
+
+    const maxX = window.innerWidth - 120;
+    const maxY = window.innerHeight - 70;
+    const newX = Math.max(16, Math.random()*maxX);
+    const newY = Math.max(16, Math.random()*maxY);
+
+    noBtn.classList.add('dodging');
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+
+    const taunts = ["تاني؟ 😏","محاولة حلوة","لأ يعني لأ؟","ثابتة على كلمتك؟","برضو مش هسيبك"];
+    if(dodgeCount <= taunts.length){
+      noBtn.textContent = taunts[dodgeCount-1];
+    }
+  }
+
+  noBtn.addEventListener('mouseenter', dodgeNo);
+  noBtn.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    dodgeNo();
+  }, {passive:false});
+  noBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    dodgeNo();
+  });
+
+  yesBtn.addEventListener('click', function(){
+    document.getElementById('askScreen').style.display = 'none';
+    document.getElementById('confirmedScreen').style.display = 'block';
+  });
+
+  // day picker
+  const days = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const months = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+  function buildDays(){
+    const opts = [];
+    const today = new Date();
+    const wanted = [0,2,3]; // Sunday, Tuesday, Wednesday
+    wanted.forEach(targetDow => {
+      const d = new Date(today);
+      let diff = (targetDow - d.getDay() + 7) % 7;
+      if(diff === 0) diff = 7;
+      d.setDate(d.getDate() + diff);
+      opts.push({
+        dayName: days[d.getDay()],
+        date: d.getDate(),
+        month: months[d.getMonth()]
+      });
+    });
+    return opts;
+  }
+
+  function renderDayList(){
+    const list = document.getElementById('dayList');
+    const opts = buildDays();
+    list.innerHTML = opts.map((o,i) => `
+      <div class="day-card" data-i="${i}">
+        <div class="dnum">${o.date}</div>
+        <div class="dinfo">
+          <div class="dname">يوم ${o.dayName}</div>
+          <div class="dmon">${o.month}</div>
+        </div>
+        <div class="dmark">🌸</div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.day-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const o = opts[card.dataset.i];
+        window.selectedDay = o;
+        document.getElementById('pickScreen').style.display = 'none';
+        document.getElementById('activityScreen').style.display = 'block';
+      });
+    });
+  }
+
+  document.querySelectorAll('.activity-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const activity = card.dataset.a;
+      const icon = card.dataset.icon;
+      const o = window.selectedDay;
+      document.getElementById('activityScreen').style.display = 'none';
+      document.querySelector('#finalScreen .stamp').textContent = icon;
+      document.getElementById('finalText').textContent = `يوم ${o.dayName} ${o.date} ${o.month} - ${activity}`;
+      document.getElementById('finalScreen').style.display = 'block';
+      try{
+        window.storage.set('outing-choice', JSON.stringify({...o, activity}), true);
+      }catch(e){}
+
+      const waBtn = document.getElementById('waBtn');
+      waBtn.onclick = function(){
+        const msg = `قولتلك ايوه! 🌹\nهننزل يوم ${o.dayName} ${o.date} ${o.month}\nهنعمل: ${activity}`;
+        const phone = "201204096550";
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      };
+    });
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', function(){
+    document.getElementById('confirmedScreen').style.display = 'none';
+    document.getElementById('pickScreen').style.display = 'block';
+    renderDayList();
+  });
+</script>
+</body>
+</html>
